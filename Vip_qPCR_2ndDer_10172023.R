@@ -20,7 +20,7 @@ boot.fn <- function(x, N=5000) {
 
 ###### PREPPING WORKSPACE ######
 
-x <- c("dplyr","ggpubr", "ggplot2", "data.table","gridExtra", "nlme") 
+x <- c("dplyr","ggpubr", "ggplot2", "data.table","gridExtra", "nlme", "lsmeans") 
 lapply(x, FUN = function(X) {do.call("library", list(X))}) #loading libraries
 
 setwd("~/Downloads")
@@ -87,10 +87,13 @@ abline(lm(Cp ~ log10(Name), data = data_SC_Vip))
 
 data_test$CpNA <- data_test$Cp
 data_test$CpNA <- ifelse(is.na(data_test$CpNA), 30, data_test$CpNA)#replacing high NAs with 30 (late cycle call)
+
 fm1 <- lme(CpNA ~ Treat*Primers, random = ~Tech_rep|Name, data = data_test)
 summary(fm1)
-
 anova(fm1)
+
+lsmeans(fm1, pairwise~Treat*Primers, adjust="tukey")
+
 
 
 #analysis of estimated init quantities of DNA
